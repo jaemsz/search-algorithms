@@ -30,11 +30,11 @@ class SuffixSearch:
             if res == 0:
                 ret = []
                 m = mid
-                while m >= 0 and not self.isMatch(self.suffixIdxs[m], pat):
+                while m >= 0 and self.isMatch(self.suffixIdxs[m], pat) == 0:
                     ret.append(self.suffixIdxs[m])
                     m -= 1
                 m = mid+1
-                while m < len(self.suffixIdxs) and not self.isMatch(self.suffixIdxs[m], pat):
+                while m < len(self.suffixIdxs) and self.isMatch(self.suffixIdxs[m], pat) == 0:
                     ret.append(self.suffixIdxs[m])
                     m += 1
                 ret.sort()
