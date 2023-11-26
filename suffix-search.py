@@ -26,22 +26,17 @@ class SuffixSearch:
         while lo <= hi:
             mid = (lo+hi)//2
             idx = self.suffixIdxs[mid]
-            res = self.isSuffix(idx, pat)
+            res = self.isMatch(idx, pat)
             if res == 0:
                 ret = []
-                mu, u = self.searchUpper(pat, 0, mid-1)
-                ml, l = self.searchLower(pat, mid+1, len(self.suffixIdxs)-1)
-                if mu != -1 and ml != -1:
-                    for m in range(mu, ml+1):
-                        ret.append(self.suffixIdxs[m])
-                elif mu != -1:
-                    for m in range(mu, mid+1):
-                        ret.append(self.suffixIdxs[m])
-                elif ml != -1:
-                    for m in range(mid, ml+1):
-                        ret.append(self.suffixIdxs[m])
-                else:
-                    ret.append(idx)
+                m = mid
+                while m >= 0 and not self.isMatch(self.suffixIdxs[m], pat):
+                    ret.append(self.suffixIdxs[m])
+                    m -= 1
+                m = mid+1
+                while m < len(self.suffixIdxs) and not self.isMatch(self.suffixIdxs[m], pat):
+                    ret.append(self.suffixIdxs[m])
+                    m += 1
                 ret.sort()
                 return ret
             elif res < 0:
@@ -50,47 +45,7 @@ class SuffixSearch:
                 lo = mid+1
         return []
 
-    def searchUpper(self, pat, lo, hi):
-        while lo <= hi:
-            mid = (lo+hi)//2
-            idx = self.suffixIdxs[mid]
-            res = self.isSuffix(idx, pat)
-            if res == 0:
-                if mid-1 >= 0:
-                    idx2 = self.suffixIdxs[mid-1]
-                    res2 = self.isSuffix(idx2, pat)
-                    if res2 != 0:
-                        return mid,idx
-                    hi = mid-1
-                else:
-                    return mid,idx
-            elif res < 0:
-                hi = mid-1
-            else:
-                lo = mid+1
-        return -1,-1
-
-    def searchLower(self, pat, lo, hi):
-        while lo <= hi:
-            mid = (lo+hi)//2
-            idx = self.suffixIdxs[mid]
-            res = self.isSuffix(idx, pat)
-            if res == 0:
-                if mid+1 < len(self.suffixIdxs):
-                    idx2 = self.suffixIdxs[mid+1]
-                    res2 = self.isSuffix(idx2, pat)
-                    if res2 != 0:
-                        return mid,idx
-                    lo = mid+1
-                else:
-                    return mid,idx
-            elif res < 0:
-                hi = mid-1
-            else:
-                lo = mid+1
-        return -1,-1
-
-    def isSuffix(self, idx, pat):
+    def isMatch(self, idx, pat):
         i, m = idx, len(self.txt)
         j, n = 0, len(pat)
         while i < m and j < n:
